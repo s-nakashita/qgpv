@@ -5,7 +5,7 @@ module sor_m
     REAL,PARAMETER :: r_earth=6.37*10**6, Rd=287., cp=1004., kp=Rd/cp, p0=1000.0!hPa
     
     contains
-SUBROUTINE SOR(nlev,nlat,nlon,dx,dy,dp,lat0,lat,Np,q,phi,psi)!T,phi,plev (for boundary condition)
+SUBROUTINE SOR(nlev,nlat,nlon,dx,dy,dp,lat0,lat,Np,q,phi,psi)
     IMPLICIT NONE      
     INTEGER,INTENT(IN) :: nlev,nlat,nlon
     REAL,INTENT(IN) :: dx(nlat),dy,dp
@@ -42,13 +42,6 @@ SUBROUTINE SOR(nlev,nlat,nlon,dx,dy,dp,lat0,lat,Np,q,phi,psi)!T,phi,plev (for bo
 !                    
 ! calcurate coeff.
 !
-!!$OMP PARALLEL DO
-!    do J = 1, nlat
-!        c(J) = 2*(1.0+lam2(J)) + &
-!        &    2*f0*f0*dx(J)*dx(J)/N/dp/dp
-!        !&    f0*f0*dx(J)*dx(J)*(Ndp(K+1)+2*Ndp(K)+Ndp(K-1))/2/dp/dp
-!    end do
-!!$OMP END PARALLEL DO
 !$OMP PARALLEL DO PRIVATE(J)
     do K = 1, nlev
         do J = 1, nlat
@@ -72,12 +65,8 @@ SUBROUTINE SOR(nlev,nlat,nlon,dx,dy,dp,lat0,lat,Np,q,phi,psi)!T,phi,plev (for bo
 !
 ! (1) boundary
 !   
-    !vertical
     pbc(1:nlon,1:nlat,1:nlev) = psi
-    !pbc(0,1:nlat,1:nlev) = psi(2,:,:)
-    !pbc(nlon+1,1:nlat,1:nlev) = psi(nlon-1,:,:)
-    !pbc(1:nlon,0,1:nlev) = psi(:,2,:)
-    !pbc(1:nlon,nlat+1,1:nlev) = psi(:,nlat-1,:)
+    !vertical
     pbc(1:nlon,1:nlat,0) = psi(:,:,2)
     pbc(1:nlon,1:nlat,nlev+1) = psi(:,:,nlev-1)
     ! horizontal
@@ -130,11 +119,11 @@ SUBROUTINE SOR(nlev,nlat,nlon,dx,dy,dp,lat0,lat,Np,q,phi,psi)!T,phi,plev (for bo
 
 END SUBROUTINE SOR
 ! simplify(dx=dy,dp=const.,Np=const.,b.c.=Neumann)
-SUBROUTINE SOR_s(nlev,nlat,nlon,dx,dy,dp,Np,lat0,q,psi)!T,phi,plev (for boundary condition)
+SUBROUTINE SOR_s(nlev,nlat,nlon,dx,dy,dp,Np,lat0,q,phi,psi)
     IMPLICIT NONE      
     INTEGER,INTENT(IN) :: nlev,nlat,nlon
     REAL,INTENT(IN) :: dx,dy,dp,Np,lat0
-    REAL,INTENT(IN) :: q(nlon,nlat,nlev)!,T(nlon,nlat,nlev),phi(nlon,nlat,nlev)
+    REAL,INTENT(IN) :: q(nlon,nlat,nlev),phi(nlon,nlat,nlev)
       
     REAL,INTENT(OUT) :: psi(nlon,nlat,nlev)
 
@@ -168,12 +157,14 @@ SUBROUTINE SOR_s(nlev,nlat,nlon,dx,dy,dp,Np,lat0,q,psi)!T,phi,plev (for boundary
 ! (1) boundary
 !   
     pbc(1:nlon,1:nlat,1:nlev) = psi
-    pbc(0,1:nlat,1:nlev) = psi(2,:,:)
-    pbc(nlon+1,1:nlat,1:nlev) = psi(nlon-1,:,:)
-    pbc(1:nlon,0,1:nlev) = psi(:,2,:)
-    pbc(1:nlon,nlat+1,1:nlev) = psi(:,nlat-1,:)
+    !vertical
     pbc(1:nlon,1:nlat,0) = psi(:,:,2)
     pbc(1:nlon,1:nlat,nlev+1) = psi(:,:,nlev-1)
+    ! horizontal
+    psi(1,:,:) = phi(1,:,:)/f0
+    psi(nlon,:,:) = phi(nlon,:,:)/f0
+    psi(:,1,:) = phi(:,1,:)/f0
+    psi(:,nlat,:) = phi(:,nlat,:)/f0
 !$OMP PARALLEL DO PRIVATE(I,J,diff)
     DO K = 1, nlev
         DO J = 1, nlat

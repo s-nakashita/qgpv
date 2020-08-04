@@ -14,7 +14,6 @@ begin
   res@gsnCenterString = yyyymmddhh+"_"+phgt+"hPa"
   res@gsnLeftString = "wind"
   res@gsnRightString = "z T"
-;  res@gsnMaximize = True
   res@gsnDraw = False
   res@gsnFrame = False
   res@gsnSpreadColors = True

@@ -5,7 +5,6 @@ load "inv_qgpv.ncl"
 load "config.txt"
 
 begin
-  ;f = addfile("era_201807_all.nc","r")
   f = addfile("qgpv.nc","r")
   fm = addfile("qgpv_mean.nc","r")
   g = addfile("psi.nc","r")
@@ -15,10 +14,8 @@ begin
   print(t)
 
   res = True
-;  res@tiMainString = dset
   res@gsnLeftString = ""
   res@gsnRightString = ""
-;  res@gsnMaximize = True
   res@gsnDraw = False
   res@gsnFrame = False
   res@gsnSpreadColors = True
@@ -74,20 +71,12 @@ begin
   gsn_define_colormap(wks,"posneg_1")
   plot = new(2, graphic)
 
-  ;u = short2flt(f->u(:,:,:,:))
-  ;v = short2flt(f->v(:,:,:,:))
-  ;T = short2flt(f->t(:,:,:,:))
-  ;phi = short2flt(f->z(:,:,:,:))
-  ;z = phi
-  ;z = phi / g_earth
   Q     = f->qgpv(t,:,:,:)
   dthdp = f->dthdp(t,:)
   theta = f->theta(t,:)
   ;printMinMax(Q, 0)
   Q_ = fm->qgpv
   Q = Q - Q_
-  ;lat = f->lat
-  ;lon = f->lon 
   plev = f->level
   nlev = dimsizes(plev)
   Np = p_stab(theta,plev)
@@ -96,23 +85,6 @@ begin
   ;resp@tiMainString = "static stability"
   ;resp@trYReverse   = True
   ;plot(1) = gsn_csm_xy(wks, Np, plev, resp)
-;; ncl  
-  ;T_ = T(2,:,:,:)
-  ;phi_ = phi(2,:,:,:)
-  ;do it=3,6
-  ;  T_ = T_ + T(it,:,:,:)
-  ;  phi_ = phi_ + phi(it,:,:,:)
-  ;end do
-  ;T_ = T_ / 5.
-  ;phi_ = phi_ / 5.
-  ;T_ = T(t,:,:,:)-T_
-  ;phi_ = phi(t,:,:,:)-phi_
-  
-  ;latc = 0.5*(lat0+lat1)
-  ;vlist = inv_qgpv(Q, phi_,T_,theta,dthdp,latc,lat,lon,plev)
-  ;ub = vlist[0]
-  ;vb = vlist[1]
-  ;zb = vlist[2]
 ;; fortran
   psi = g->psi(0,:,:,:)
   printVarSummary(psi)
@@ -126,8 +98,7 @@ begin
   ub@units = "m/s"
   Tb = psi
   Tb@units = "K"
-  ;print(z&latitude)
-
+  
   lat = dble2flt(g->lat)
   lon = dble2flt(g->lon)
   fcori = lat

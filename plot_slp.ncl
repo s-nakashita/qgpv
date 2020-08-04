@@ -14,7 +14,6 @@ begin
   res@gsnCenterString = yyyymmddhh
   res@gsnLeftString = "slp"
   res@gsnRightString = "hPa"
-;  res@gsnMaximize = True
   res@gsnMaskLambertConformal = True
   res@mpProjection = "LambertConformal"
   res@mpMinLonF = lon0

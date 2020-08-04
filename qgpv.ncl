@@ -42,13 +42,6 @@ begin
   printMinMax(T,0)
   theta = pot_temp(plev, T, 0, 1)
   printMinMax(theta, 0)
-  ;do k = 0, nlev-1
-  ;  do j = 0, nlat-1
-  ;    do i = 0, nlon-1
-  ;      theta(k,j,i) = T(k,j,i)*(plev(k)/p0)^(-kp)
-  ;    end do
-  ;  end do
-  ;end do  
 ; calcurate static_stability
   Tr = dim_avg_n(T,(/1,2/))
   Ta = T
@@ -64,10 +57,6 @@ begin
   theta = theta - conform_dims((/nlev,nlat,nlon/), s1[1], 0);anomaly
   theta = theta / conform_dims((/nlev,nlat,nlon/), s1[2], 0);theta'/(d(theta_r)/dp)
   dtheta = center_finite_diff_n(theta, conform(theta,plev,0), False, 0, 0)
-  ;Ta = Ta / conform_dims((/nlev,nlat,nlon/), s1[2], 0);T'/(d(theta_r)/dp)
-  ;printMinMax(Ta,0)
-  ;s2 = static_stability(plev, Ta, 0, 1)
-  ;dtheta = s2[2]
   printMinMax(dtheta,0)
 ; calcurate relative vorticity
   zeta = uv2dvF(v, -u)  ;global
@@ -86,7 +75,6 @@ begin
   end do
   ListPush(Qlist, q)
   ;printVarSummary(q)
- ; Q(2,:,:) = smth9(Q(2,:,:),0.5,0.25,True)
   return Qlist
  end
 

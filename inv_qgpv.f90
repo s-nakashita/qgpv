@@ -30,7 +30,6 @@ program inv_qgpv
 
     qpart = q(slon:elon,slat:elat,:) - q_(slon:elon,slat:elat,:)
     
-    !call fread_v(vfile,"t",4,T)
     phi_ = 0.0
     do it = 3, 7 
         call fread_v(vfile,"z",it,phi)
@@ -39,11 +38,6 @@ program inv_qgpv
     phi_ = phi_/5.0
     call fread_v(vfile,"z",5,phi)
     phip = phi(slon:elon,slat:elat,:) - phi_(slon:elon,slat:elat,:)
-    !print *, "lon",rlon
-    !print *, "lat",rlat
-    !print *, "level",lev
-    !print *, "time",time
-    !print *, "T",minval(T),maxval(T)
     print *, "phi",minval(phip),maxval(phip)
     
     lat = rlat(slat:elat)
@@ -57,8 +51,6 @@ program inv_qgpv
     end do
     print *, dp
     lat0 = 45.0
-    !dy = 2*pi*r_earth*cos(lat0*deg2rad)*0.75/360.0
-    !dy = dx
 !
 ! p-coordinate static_stability
 !    
@@ -71,10 +63,9 @@ program inv_qgpv
         Np(k) = -rlev(k)*100*dthdp(k)/(kp*exn(k)*theta(k)**2)
     end do
     print *, "Np",Np
-    N = 2.0e-6
-    !Np = N
-    print *, "N",N
-    call SOR(kmax,nlat,nlon,dx,dy,dp(1),lat0,lat,Np,qpart,phip,psi)!T,phi,,rlev
+    !N = 2.0e-6
+    !print *, "N",N
+    call SOR(kmax,nlat,nlon,dx,dy,dp(1),lat0,lat,Np,qpart,phip,psi)
     !call SOR_s(kmax,nlat,nlon,dy,dy,dp(1),N,lat0,qpart,psi)
     print *, "psi",minval(psi),maxval(psi)
     open(11,file=ofile,status='new',&

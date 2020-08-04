@@ -13,7 +13,6 @@ contains
     integer :: istart(2),icount(2)
     integer :: ic,ncid,idvar,idlev,idtime
     integer,intent(in) :: ip
-    !real :: rlev(kmax),rtime(ntime)
     real,intent(out) :: z(kmax)
     character,intent(in) :: fname*100,vname*5
 
@@ -46,8 +45,6 @@ contains
     integer,allocatable :: istart(:),icount(:)
     integer :: ic,ncid,idvar,idlon,idlat,idlev,idtime
     integer,intent(in) :: ip
-    !real :: rlon(0:imax-1),rlat(jmax),rtime(ntime)
-    !real :: rlev(kmax)
     real,intent(out) :: z(imax,jmax,kmax)
     character,intent(in) :: fname*100,vname*4
 
@@ -93,7 +90,6 @@ contains
     integer :: istart(4),icount(4)
     integer :: ic,ncid,idvar,idlon,idlat,idlev,idtime
     integer,intent(in) :: ip
-    !real :: rlon(0:imax-1),rlat(jmax),rtime(ntime)
     real,intent(out) :: z(0:imax-1,jmax,kmax)
     character(len=*),intent(in) :: fname,vname
 

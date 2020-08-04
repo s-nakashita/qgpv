@@ -13,9 +13,6 @@ begin
   vt = closest_val(yyyymmddhh, utime)
 
   ofile = "qgpv.nc"
-;  setfileoption("nc", "format", "netcdf4")
-;  setfileoption("nc", "headerReserveSpace", 64000)
-;  setfileoption("nc", "preFill", False)
   if (isfilepresent(ofile)) then
     system("rm " + ofile)
   end if
@@ -110,7 +107,6 @@ begin
 
   t0 = time(0:6)
   out->time = (/t0/)
-  ;level = plev(::-1)
   out->level = (/plev/)
   out->lat   = (/lat/)
   out->lon   = (/lon/)
@@ -124,11 +120,9 @@ begin
 ;************************************************
 
   res = True
-;  res@tiMainString = dset
   res@gsnCenterString = "qgpv"
   res@gsnLeftString = ""
   res@gsnRightString = ""
-;  res@gsnMaximize = True
   res@gsnDraw = False
   res@gsnFrame = False
   res@gsnSpreadColors = True

@@ -19,9 +19,8 @@ function inv_qgpv(q:numeric, phi:numeric, T:numeric, theta:numeric, dthdp:numeri
 ;   Qlist[0] u
 ;   Qlist[1] v
 ;   Qlist[2] z
-; NB. gradient and divergence is computed using SPHEREPACK functions
-;     no missing values are allowed
-local plev,Np,exner,psi,fcori,grad
+; NB. this function uses subroutine SOR(sor90.so) with WRAPIT
+local plev,Np,psi,fcori,grad
 begin
   
   n = dimsizes(q)
@@ -29,44 +28,15 @@ begin
   nlat = n(1)
   nlon = n(2)
   Qlist = NewList("lifo")
-  ;print(n)
-  ;lat = new(nlat,float)
-  ;lat = (/lat1(::-1)/)
-  ;dx = 2 * pi * r_earth * 0.75 / 360.
-  ;dy = new(nlat, float)
-  ;do j = 0, nlat-1
-  ;  dy(j) = 2 * pi * r_earth * cos(lat(j)*deg2rad) * 0.75 / 360.
-  ;end do
   plev = lev*100
   plev@units = "Pa"
-  ;print(plev)
-  ;dp = new(nlev,float)
-  ;dp = 0.0
-  ;do k = 1, nlev-2
-  ;  dp(k) = plev(k+1)-plev(k)
-  ;end do
 ;
 ; calcurate p-coordinate static_stability
 ;
-  ;print(theta)
-  ;print(dthdp)
-  Np = new(nlev,float)
-  exner = new(nlev,float)
-  exner = cp*(plev/p0)^kp
-  Np = -plev * dthdp / (kp * exner * theta^2)
-;  print(dx)
-;  print(dy)
-;  print(dp) 
-;  print(kp)
-;  print(exner)
-;  print(Np)
-; print(lat)
+  Np = p_stab(theta,plev)
 ;; invert qgpv
-;  psi = new((/nlev,nlat,nlon/),float) 
-;  SOR::SOR(nlev,nlat,nlon,lat,lat0,plev,Np,T,phi,q,psi) 
-  f = addfile("psi.nc","r")
-  psi = f->psi(0,:,:,:)
-;  print(dimsizes(psi))
+  psi = new((/nlev,nlat,nlon/),float) 
+  SOR::SOR(nlev,nlat,nlon,lat,lat0,plev,Np,T,phi,q,psi) 
 ; calcurate variables
   z = q
   z@units = "m"
@@ -85,8 +55,8 @@ begin
   gradsf(psi, v, u) ;global
   u = -u
   ;grad = grad_latlon_cfd(z, lat, lon, False, False) ;regional
-  ;v    = grad[0]
-  ;u    = -grad[1] 
+  ;u    = -grad[0]
+  ;v    = grad[1] 
   ListPush(Qlist,v)
   ListPush(Qlist,u)
   return Qlist

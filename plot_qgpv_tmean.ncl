@@ -14,9 +14,6 @@ begin
   mmdd=str_get_cols(tostring(yyyymmddhh), 4, 7)
 
   ofile = "qgpv_mean.nc"
-;  setfileoption("nc", "format", "netcdf4")
-;  setfileoption("nc", "headerReserveSpace", 64000)
-;  setfileoption("nc", "preFill", False)
   if (isfilepresent(ofile)) then
     system("rm " + ofile)
   end if
@@ -130,11 +127,9 @@ begin
 ; create plot
 ;************************************************
   res = True
-;  res@tiMainString = dset
   res@gsnCenterString = "mean_0703-0707"
   res@gsnLeftString = ""
   res@gsnRightString = ""
-;  res@gsnMaximize = True
   res@gsnDraw = False
   res@gsnFrame = False
   res@gsnSpreadColors = True
