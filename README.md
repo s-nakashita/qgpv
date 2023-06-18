@@ -1,2 +1,2 @@
 # qgpv
-quasi-geopotential PV inversion program
+quasi-geostrophic PV inversion program
